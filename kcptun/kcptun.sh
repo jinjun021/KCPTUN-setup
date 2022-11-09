@@ -1203,7 +1203,7 @@ set_kcptun_config() {
 		EOF
 		read -p "(默认: ${listen_port}): " input
 		if [ -n "$input" ]; then			
-			listen_port="127.0.0.1: " && "$input"
+			listen_port="$input"
 		fi
 
 	input=""
