@@ -70,6 +70,7 @@ D_RESEND=2
 D_NC=1
 D_SOCKBUF=4194304
 D_SMUXBUF=4194304
+D_STREAMBUF=4194304
 D_KEEPALIVE=10
 # ======================
 
@@ -1635,6 +1636,125 @@ set_kcptun_config() {
 	tcp = ${tcp}
 	---------------------------
 	EOF
+	
+	
+	
+	
+	
+	
+	----------------
+	----------------
+	-----------------
+	[ -z "$sockbuf" ] && sockbuf="$D_SOCKBUF"
+	while true
+	do
+		cat >&1 <<-'EOF'
+		请设置 UDP 收发缓冲区大小(sockbuf)
+		EOF
+		read -p "(默认: ${sockbuf}): " input
+		if [ -n "$input" ]; then
+			if ! is_number "$input" || [ $input -le 0 ]; then
+				echo "输入有误, 请输入大于0的数字!"
+				continue
+			fi
+
+			sockbuf=$input 
+		fi
+		break
+	done
+
+	input=""
+	cat >&1 <<-EOF
+			
+			
+	---------------------------
+	sockbuf = ${sockbuf}
+	---------------------------
+	EOF
+
+	[ -z "$smuxbuf" ] && smuxbuf="$D_SMUXBUF"
+	while true
+	do
+		cat >&1 <<-'EOF'
+		请设置 de-mux 缓冲区大小(smuxbuf)
+		EOF
+		read -p "(单位: MB, 默认: ${smuxbuf}): " input
+		if [ -n "$input" ]; then
+			if ! is_number "$input" || [ $input -le 0 ]; then
+				echo "输入有误, 请输入大于0的数字!"
+				continue
+			fi
+
+			smuxbuf=$input
+		fi
+		break
+	done
+
+	input=""
+	cat >&1 <<-EOF
+	---------------------------
+	smuxbuf = ${smuxbuf}
+	---------------------------
+	EOF
+	
+	
+	[ -z "$streambuf" ] && streambuf="$D_STRASMBUF"
+	while true
+	do
+		cat >&1 <<-'EOF'
+		请设置streambuf缓冲区大小(streambuf)
+		EOF
+		read -p "(单位: MB, 默认: ${streambuf}): " input
+		if [ -n "$input" ]; then
+			if ! is_number "$input" || [ $input -le 0 ]; then
+				echo "输入有误, 请输入大于0的数字!"
+				continue
+			fi
+
+			streambuf=$input
+		fi
+		break
+	done
+
+	input=""
+	cat >&1 <<-EOF
+	---------------------------
+	streambuf = ${streambuf}
+	---------------------------
+	EOF
+
+	[ -z "$keepalive" ] && keepalive="$D_KEEPALIVE"
+	while true
+	do
+		cat >&1 <<-'EOF'
+		请设置 Keepalive 的间隔时间
+		EOF
+		read -p "(单位: s, 默认值: ${keepalive}, 前值: 5): " input
+		if [ -n "$input" ]; then
+			if ! is_number "$input" || [ $input -le 0 ]; then
+				echo "输入有误, 请输入大于0的数字!"
+				continue
+			fi
+
+			keepalive=$input
+		fi
+		break
+	done
+
+	cat >&1 <<-EOF
+	---------------------------
+	keepalive = ${keepalive}
+	---------------------------
+	EOF
+	
+	
+	------------------
+	-------------------
+	-------------------
+	
+	
+	
+	
 
 	unset_snmp() {
 		snmplog=""
@@ -1981,6 +2101,32 @@ set_hidden_parameters() {
 	smuxbuf = ${smuxbuf}
 	---------------------------
 	EOF
+	
+	[ -z "$streambuf" ] && streambuf="$D_STRASMBUF"
+	while true
+	do
+		cat >&1 <<-'EOF'
+		请设置streambuf缓冲区大小(streambuf)
+		EOF
+		read -p "(单位: MB, 默认: ${streambuf}): " input
+		if [ -n "$input" ]; then
+			if ! is_number "$input" || [ $input -le 0 ]; then
+				echo "输入有误, 请输入大于0的数字!"
+				continue
+			fi
+
+			streambuf=$input
+		fi
+		break
+	done
+
+	input=""
+	cat >&1 <<-EOF
+	---------------------------
+	streambuf = ${streambuf}
+	---------------------------
+	EOF
+	
 
 	[ -z "$keepalive" ] && keepalive="$D_KEEPALIVE"
 	while true
@@ -2061,7 +2207,12 @@ gen_kcptun_config() {
 	  "dscp": ${dscp},
 	  "nocomp": ${nocomp},
 	  "quiet": ${quiet},
-	  "tcp": ${tcp}
+	  "tcp": ${tcp},
+	  "sockbuf": ${sockbuf},
+	  "smuxbuf": ${smuxbuf},
+	  "streambuf": ${streambuf},
+	  "keepalive": ${keepalive}  
+	  
 	}
 	EOF
 
@@ -2089,7 +2240,7 @@ gen_kcptun_config() {
 	}
 
 	write_configs_to_file "snmplog" "snmpperiod" "pprof" "acknodelay" "nodelay" \
-		"interval" "resend" "nc" "sockbuf" "smuxbuf" "keepalive"
+		"interval" "resend" "nc" "sockbuf" "smuxbuf" "streambuf" "keepalive"
 
 	if ! grep -q "^${run_user}:" '/etc/passwd'; then
 		(
@@ -2331,7 +2482,7 @@ show_current_instance_info() {
 
 	show_configs "key" "crypt" "mode" "mtu" "sndwnd" "rcvwnd" "datashard" \
 		"parityshard" "dscp" "nocomp" "quiet" "tcp" "nodelay" "interval" "resend" \
-		"nc" "acknodelay" "sockbuf" "smuxbuf" "keepalive"
+		"nc" "acknodelay" "sockbuf" "smuxbuf" "streambuf" "keepalive"
 
 	show_version_and_client_url
 
@@ -2373,7 +2524,7 @@ show_current_instance_info() {
 
 	gen_client_configs "crypt" "mode" "mtu" "sndwnd" "rcvwnd" "datashard" \
 		"parityshard" "dscp" "nocomp" "quiet" "tcp" "nodelay" "interval" "resend" \
-		"nc" "acknodelay" "sockbuf" "smuxbuf" "keepalive"
+		"nc" "acknodelay" "sockbuf" "smuxbuf"  "streambuf" "keepalive"
 
 	cat >&1 <<-EOF
 
@@ -2407,7 +2558,7 @@ show_current_instance_info() {
 
 	gen_mobile_configs "crypt" "mode" "mtu" "sndwnd" "rcvwnd" "datashard" \
 		"parityshard" "dscp" "nocomp" "quiet" "tcp" "nodelay" "interval" "resend" \
-		"nc" "acknodelay" "sockbuf" "smuxbuf" "keepalive"
+		"nc" "acknodelay" "sockbuf" "smuxbuf" "streambuf" "keepalive"
 
 	cat >&1 <<-EOF
 
