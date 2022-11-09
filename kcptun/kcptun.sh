@@ -2119,7 +2119,7 @@ gen_kcptun_config() {
 	}
 
 	write_configs_to_file "snmplog" "snmpperiod" "pprof" "acknodelay" "nodelay" \
-		"interval" "resend" "nc" "sockbuf" "smuxbuf" "streambuf" "keepalive"
+		"interval" "resend" "nc" 
 
 	if ! grep -q "^${run_user}:" '/etc/passwd'; then
 		(
