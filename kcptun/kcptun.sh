@@ -2057,7 +2057,6 @@ gen_kcptun_config() {
 	cat > "$config_file"<<-EOF
 	{
 	  "listen": ":${listen_port}",
-	  # "listen": "${listen_addr}:${listen_port}",
 	  "target": "${target_addr}:${target_port}",
 	  "key": "${key}",
 	  "crypt": "${crypt}",
