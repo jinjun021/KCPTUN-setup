@@ -1675,7 +1675,7 @@ set_kcptun_config() {
 	EOF
 	
 	
-	[ -z "$streambuf" ] && streambuf="$D_STRASMBUF"
+	[ -z "$streambuf" ] && streambuf="$D_STREAMBUF"
 	while true
 	do
 		cat >&1 <<-'EOF'
