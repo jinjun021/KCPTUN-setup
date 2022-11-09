@@ -1194,17 +1194,14 @@ set_kcptun_config() {
 
 	# 设置服务运行端口
 	[ -z "$listen_port" ] && listen_port="$D_LISTEN_PORT"
-
-		cat >&1 <<-'EOF'
-		请输入 Kcptun 服务端运行端口 [1~65535]
-		这个端口就是 Kcptun 客户端连接的端口
-		支持portrange，如：29000-29999
-		注意端口是否可用！
-		EOF
-		read -p "(默认: ${listen_port}): " input
-		if [ -n "$input" ]; then			
-			listen_port="$input"
-		fi
+	cat >&1 <<-'EOF'
+	请输入 Kcptun 服务端运行端口 [1~65535],这个端口就是 Kcptun 客户端连接的端口
+	支持portrange，如：29000-29999,注意端口是否可用！
+	EOF
+	read -p "(默认: ${listen_port}): " input
+	if [ -n "$input" ]; then			
+		listen_port="$input"
+	fi
 
 	input=""
 	cat >&1 <<-EOF
