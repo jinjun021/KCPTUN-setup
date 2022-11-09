@@ -44,7 +44,7 @@ SUPERVISOR_SYSTEMD_FILE_URL="${BASE_URL}/startup/supervisord.systemd"
 
 # 默认参数
 # =======================
-D_LISTEN_PORT=29900
+D_LISTEN_PORT='29900-29999'
 D_TARGET_ADDR='127.0.0.1'
 D_TARGET_PORT=12984
 D_KEY="very fast"
@@ -1199,24 +1199,13 @@ set_kcptun_config() {
 		cat >&1 <<-'EOF'
 		请输入 Kcptun 服务端运行端口 [1~65535]
 		这个端口就是 Kcptun 客户端连接的端口
+		支持portrange，如：29000-29999
+		注意端口是否可用！
 		EOF
 		read -p "(默认: ${listen_port}): " input
-		if [ -n "$input" ]; then
-			if is_port "$input"; then
-				listen_port="$input"
-			else
-				echo "输入有误, 请输入 1~65535 之间的数字!"
-				continue
-			fi
+		if [ -n "$input" ]; then			
+				listen_port="127.0.0.1：" && "$input"
 		fi
-
-		if port_using "$listen_port" && \
-			[ "$listen_port" != "$current_listen_port" ]; then
-			echo "端口已被占用, 请重新输入!"
-			continue
-		fi
-		break
-	done
 
 	input=""
 	cat >&1 <<-EOF
