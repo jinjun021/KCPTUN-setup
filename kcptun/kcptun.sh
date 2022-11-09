@@ -2046,9 +2046,9 @@ gen_kcptun_config() {
 		mk_file_dir "$snmplog" '777'
 	fi
 
-	# if ( echo "$listen_addr" | grep -q ":" ); then
-	# 	listen_addr="[${listen_addr}]"
-	# fi
+	if ( echo "$listen_addr" | grep -q ":" ); then
+		listen_addr="[${listen_addr}]"
+	fi
 
 	if ( echo "$target_addr" | grep -q ":" ); then
 		target_addr="[${target_addr}]"
@@ -2287,11 +2287,11 @@ load_instance_config() {
 	done
 	IFS=$OLDIFS
 
-	if [ -n "$listen" ]; then
-		listen_port="$(echo "$listen" | rev | cut -d ':' -f1 | rev)"
-		listen_addr="$(echo "$listen" | sed "s/:${listen_port}$//" | grep -oE '[0-9a-fA-F\.:]*')"
-		listen=""
-	fi
+	#if [ -n "$listen" ]; then
+	#	listen_port="$(echo "$listen" | rev | cut -d ':' -f1 | rev)"
+	#	listen_addr="$(echo "$listen" | sed "s/:${listen_port}$//" | grep -oE '[0-9a-fA-F\.:]*')"
+	#	listen=""
+	#fi
 	if [ -n "$target" ]; then
 		target_port="$(echo "$target" | rev | cut -d ':' -f1 | rev)"
 		target_addr="$(echo "$target" | sed "s/:${target_port}$//" | grep -oE '[0-9a-fA-F\.:]*')"
