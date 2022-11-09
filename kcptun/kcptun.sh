@@ -1194,8 +1194,7 @@ set_kcptun_config() {
 
 	# 设置服务运行端口
 	[ -z "$listen_port" ] && listen_port="$D_LISTEN_PORT"
-	while true
-	do
+
 		cat >&1 <<-'EOF'
 		请输入 Kcptun 服务端运行端口 [1~65535]
 		这个端口就是 Kcptun 客户端连接的端口
@@ -1204,7 +1203,7 @@ set_kcptun_config() {
 		EOF
 		read -p "(默认: ${listen_port}): " input
 		if [ -n "$input" ]; then			
-				listen_port="127.0.0.1：" && "$input"
+			listen_port="127.0.0.1: " && "$input"
 		fi
 
 	input=""
