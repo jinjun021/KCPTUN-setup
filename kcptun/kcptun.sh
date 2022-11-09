@@ -2046,9 +2046,9 @@ gen_kcptun_config() {
 		mk_file_dir "$snmplog" '777'
 	fi
 
-	if ( echo "$listen_addr" | grep -q ":" ); then
-		listen_addr="[${listen_addr}]"
-	fi
+	# if ( echo "$listen_addr" | grep -q ":" ); then
+	# 	listen_addr="[${listen_addr}]"
+	# fi
 
 	if ( echo "$target_addr" | grep -q ":" ); then
 		target_addr="[${target_addr}]"
