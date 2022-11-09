@@ -1658,9 +1658,7 @@ set_kcptun_config() {
 	done
 
 	input=""
-	cat >&1 <<-EOF
-			
-			
+	cat >&1 <<-EOF		
 	---------------------------
 	sockbuf = ${sockbuf}
 	---------------------------
@@ -1696,7 +1694,7 @@ set_kcptun_config() {
 	while true
 	do
 		cat >&1 <<-'EOF'
-		请设置streambuf缓冲区大小(streambuf)
+		请设置缓冲区大小(streambuf)
 		EOF
 		read -p "(单位: MB, 默认: ${streambuf}): " input
 		if [ -n "$input" ]; then
