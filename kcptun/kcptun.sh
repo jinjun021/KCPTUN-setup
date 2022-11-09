@@ -44,7 +44,7 @@ SUPERVISOR_SYSTEMD_FILE_URL="${BASE_URL}/startup/supervisord.systemd"
 
 # 默认参数
 # =======================
-D_LISTEN_PORT='29900-29999'
+D_LISTEN_PORT=29900-29999
 D_TARGET_ADDR='127.0.0.1'
 D_TARGET_PORT=12984
 D_KEY="very fast"
