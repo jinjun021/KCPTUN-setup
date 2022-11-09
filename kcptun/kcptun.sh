@@ -61,6 +61,10 @@ D_QUIET='false'
 D_TCP='false'
 D_SNMPPERIOD=60
 D_PPROF='false'
+D_SOCKBUF=4194304
+D_SMUXBUF=4194304
+D_STREAMBUF=4194304
+D_KEEPALIVE=10
 
 # 隐藏参数
 D_ACKNODELAY='false'
@@ -68,10 +72,7 @@ D_NODELAY=1
 D_INTERVAL=20
 D_RESEND=2
 D_NC=1
-D_SOCKBUF=4194304
-D_SMUXBUF=4194304
-D_STREAMBUF=4194304
-D_KEEPALIVE=10
+
 # ======================
 
 # 当前选择的实例 ID
@@ -1802,39 +1803,7 @@ set_kcptun_config() {
 	---------------------------
 	EOF
 
-	unset_hidden_parameters() {
-		acknodelay=""
-		sockbuf=""
-		smuxbuf=""
-		keepalive=""
-		cat >&1 <<-EOF
-		---------------------------
-		不配置隐藏参数
-		---------------------------
-		EOF
-	}
 
-	cat >&1 <<-'EOF'
-	基础参数设置完成，是否设置额外的隐藏参数?
-	通常情况下保持默认即可，不用额外设置
-	EOF
-	read -p "(默认: 否) [y/n]: " yn
-	if [ -n "$yn" ]; then
-		case "$(first_character "$yn")" in
-			y|Y)
-				set_hidden_parameters
-				;;
-			n|N|*)
-				unset_hidden_parameters
-				;;
-		esac
-	else
-		unset_hidden_parameters
-	fi
-
-	if [ $listen_port -le 1024 ]; then
-		run_user="root"
-	fi
 
 	echo "配置完成。"
 	any_key_to_continue
@@ -2037,82 +2006,6 @@ set_hidden_parameters() {
 	acknodelay = ${acknodelay}
 	---------------------------
 	EOF
-
-	[ -z "$sockbuf" ] && sockbuf="$D_SOCKBUF"
-	while true
-	do
-		cat >&1 <<-'EOF'
-		请设置 UDP 收发缓冲区大小(sockbuf)
-		EOF
-		read -p "(单位: MB, 默认: $(expr ${sockbuf} / 1024 / 1024)): " input
-		if [ -n "$input" ]; then
-			if ! is_number "$input" || [ $input -le 0 ]; then
-				echo "输入有误, 请输入大于0的数字!"
-				continue
-			fi
-
-			sockbuf=$(expr $input * 1024 * 1024)
-		fi
-		break
-	done
-
-	input=""
-	cat >&1 <<-EOF
-	---------------------------
-	sockbuf = ${sockbuf}
-	---------------------------
-	EOF
-
-	[ -z "$smuxbuf" ] && smuxbuf="$D_SMUXBUF"
-	while true
-	do
-		cat >&1 <<-'EOF'
-		请设置 de-mux 缓冲区大小(smuxbuf)
-		EOF
-		read -p "(单位: MB, 默认: $(expr ${smuxbuf} / 1024 / 1024)): " input
-		if [ -n "$input" ]; then
-			if ! is_number "$input" || [ $input -le 0 ]; then
-				echo "输入有误, 请输入大于0的数字!"
-				continue
-			fi
-
-			smuxbuf=$(expr $input * 1024 * 1024)
-		fi
-		break
-	done
-
-	input=""
-	cat >&1 <<-EOF
-	---------------------------
-	smuxbuf = ${smuxbuf}
-	---------------------------
-	EOF
-	
-	[ -z "$streambuf" ] && streambuf="$D_STRASMBUF"
-	while true
-	do
-		cat >&1 <<-'EOF'
-		请设置streambuf缓冲区大小(streambuf)
-		EOF
-		read -p "(单位: MB, 默认: ${streambuf}): " input
-		if [ -n "$input" ]; then
-			if ! is_number "$input" || [ $input -le 0 ]; then
-				echo "输入有误, 请输入大于0的数字!"
-				continue
-			fi
-
-			streambuf=$input
-		fi
-		break
-	done
-
-	input=""
-	cat >&1 <<-EOF
-	---------------------------
-	streambuf = ${streambuf}
-	---------------------------
-	EOF
-	
 
 	[ -z "$keepalive" ] && keepalive="$D_KEEPALIVE"
 	while true
